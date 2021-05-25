@@ -25785,9 +25785,14 @@ project git repo setup
   135  cd dmatch01/
   136  git clone https://github.com/dmatch01/astro.git
   137  cd astro/
-  148  git config --global user.email "darroyo@us.ibm.com"
-  149  git config --global user.name "Diana Arroyo"
-
+$
+$
+$ git config --global user.email "<my userid>@us.ibm.com"
+$
+$ git config --global user.name "<my name>"
+$
+$
+$
 $ vi /boot/cmdline.txt
   change: console=serial0,115200 console=tty1 root=/dev/mmcblk0p7 rootfstype=ext4 elevator=deadline fsck.repair=yes rootwait quiet splash plymouth.ignore-serial-console
   to:
