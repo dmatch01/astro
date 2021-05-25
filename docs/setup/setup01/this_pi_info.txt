@@ -25786,17 +25786,120 @@ project git repo setup
   136  git clone https://github.com/dmatch01/astro.git
   137  cd astro/
 $
-$
 $ git config --global user.email "<my userid>@us.ibm.com"
 $
 $ git config --global user.name "<my name>"
 $
-$
-$
+
 $ vi /boot/cmdline.txt
   change: console=serial0,115200 console=tty1 root=/dev/mmcblk0p7 rootfstype=ext4 elevator=deadline fsck.repair=yes rootwait quiet splash plymouth.ignore-serial-console
-  to:
+  to: console=serial0,115200 console=tty1 root=/dev/mmcblk0p7 rootfstype=ext4 elevator=deadline fsck.repair=yes rootwait quiet splash plymouth.ignore-serial-consoles cgroup_enable=memory
 $
+$ cat /proc/cgroups
+#subsys_name	hierarchy	num_cgroups	enabled
+cpuset	5	1	1
+cpu	6	1	1
+cpuacct	6	1	1
+blkio	4	1	1
+memory	0	52	0
+devices	9	35	1
+freezer	2	1	1
+net_cls	7	1	1
+perf_event	8	1	1
+net_prio	7	1	1
+pids	3	40	1
+$
+$ python example.py 
+2021-05-23 12:52:56,558	INFO services.py:1174 -- View the Ray dashboard at http://127.0.0.1:8265
+Traceback (most recent call last):
+  File "example.py", line 9, in <module>
+    print(ray.get(futures))
+  File "/home/pi/.local/lib/python3.7/site-packages/ray/_private/client_mode_hook.py", line 47, in wrapper
+    return func(*args, **kwargs)
+  File "/home/pi/.local/lib/python3.7/site-packages/ray/worker.py", line 1456, in get
+    raise value.as_instanceof_cause()
+ray.exceptions.RayTaskError(FileNotFoundError): ray::f() (pid=14040, ip=192.168.1.35)
+  File "python/ray/_raylet.pyx", line 440, in ray._raylet.execute_task
+  File "/home/pi/.local/lib/python3.7/site-packages/ray/memory_monitor.py", line 127, in raise_if_low_memory
+    used_gb, total_gb = self.get_memory_usage()
+  File "/home/pi/.local/lib/python3.7/site-packages/ray/memory_monitor.py", line 110, in get_memory_usage
+    "rb") as f:
+FileNotFoundError: [Errno 2] No such file or directory: '/sys/fs/cgroup/memory/memory.usage_in_bytes'
+$ ls -l /sys/fs/cgroup
+total 0
+dr-xr-xr-x 2 root root  0 Feb 14  2019 blkio
+lrwxrwxrwx 1 root root 11 Feb 14  2019 cpu -> cpu,cpuacct
+lrwxrwxrwx 1 root root 11 Feb 14  2019 cpuacct -> cpu,cpuacct
+dr-xr-xr-x 2 root root  0 Feb 14  2019 cpu,cpuacct
+dr-xr-xr-x 2 root root  0 Feb 14  2019 cpuset
+dr-xr-xr-x 4 root root  0 Feb 14  2019 devices
+dr-xr-xr-x 2 root root  0 Feb 14  2019 freezer
+lrwxrwxrwx 1 root root 16 Feb 14  2019 net_cls -> net_cls,net_prio
+dr-xr-xr-x 2 root root  0 Feb 14  2019 net_cls,net_prio
+lrwxrwxrwx 1 root root 16 Feb 14  2019 net_prio -> net_cls,net_prio
+dr-xr-xr-x 2 root root  0 Feb 14  2019 perf_event
+dr-xr-xr-x 4 root root  0 Feb 14  2019 pids
+dr-xr-xr-x 5 root root  0 Feb 14  2019 systemd
+dr-xr-xr-x 5 root root  0 Feb 14  2019 unified
+$
+$ sudo reboot now
+$
+$  ls -l /sys/fs/cgroup/memory/
+total 0
+-rw-r--r--  1 root root 0 May 23 12:59 cgroup.clone_children
+--w--w--w-  1 root root 0 May 23 12:59 cgroup.event_control
+-rw-r--r--  1 root root 0 May 23 12:57 cgroup.procs
+-r--r--r--  1 root root 0 May 23 12:59 cgroup.sane_behavior
+-rw-r--r--  1 root root 0 May 23 12:59 memory.failcnt
+--w-------  1 root root 0 May 23 12:59 memory.force_empty
+-rw-r--r--  1 root root 0 May 23 12:59 memory.kmem.failcnt
+-rw-r--r--  1 root root 0 May 23 12:59 memory.kmem.limit_in_bytes
+-rw-r--r--  1 root root 0 May 23 12:59 memory.kmem.max_usage_in_bytes
+-r--r--r--  1 root root 0 May 23 12:59 memory.kmem.slabinfo
+-rw-r--r--  1 root root 0 May 23 12:59 memory.kmem.tcp.failcnt
+-rw-r--r--  1 root root 0 May 23 12:59 memory.kmem.tcp.limit_in_bytes
+-rw-r--r--  1 root root 0 May 23 12:59 memory.kmem.tcp.max_usage_in_bytes
+-r--r--r--  1 root root 0 May 23 12:59 memory.kmem.tcp.usage_in_bytes
+-r--r--r--  1 root root 0 May 23 12:59 memory.kmem.usage_in_bytes
+-rw-r--r--  1 root root 0 May 23 12:57 memory.limit_in_bytes
+-rw-r--r--  1 root root 0 May 23 12:59 memory.max_usage_in_bytes
+-rw-r--r--  1 root root 0 May 23 12:59 memory.memsw.failcnt
+-rw-r--r--  1 root root 0 May 23 12:59 memory.memsw.limit_in_bytes
+-rw-r--r--  1 root root 0 May 23 12:59 memory.memsw.max_usage_in_bytes
+-r--r--r--  1 root root 0 May 23 12:59 memory.memsw.usage_in_bytes
+-rw-r--r--  1 root root 0 May 23 12:59 memory.move_charge_at_immigrate
+-rw-r--r--  1 root root 0 May 23 12:59 memory.oom_control
+----------  1 root root 0 May 23 12:59 memory.pressure_level
+-rw-r--r--  1 root root 0 May 23 12:59 memory.soft_limit_in_bytes
+-r--r--r--  1 root root 0 May 23 12:59 memory.stat
+-rw-r--r--  1 root root 0 May 23 12:59 memory.swappiness
+-r--r--r--  1 root root 0 May 23 12:59 memory.usage_in_bytes
+-rw-r--r--  1 root root 0 Feb 14  2019 memory.use_hierarchy
+-rw-r--r--  1 root root 0 May 23 12:59 notify_on_release
+-rw-r--r--  1 root root 0 May 23 12:59 release_agent
+drwxr-xr-x 33 root root 0 Feb 14  2019 system.slice
+-rw-r--r--  1 root root 0 May 23 12:59 tasks
+drwxr-xr-x  3 root root 0 Feb 14  2019 user.slice
+$
+$ cat /proc/cgroups
+#subsys_name	hierarchy	num_cgroups	enabled
+cpuset	10	1	1
+cpu	9	1	1
+cpuacct	9	1	1
+blkio	4	1	1
+memory	3	72	1
+devices	7	34	1
+freezer	2	1	1
+net_cls	8	1	1
+perf_event	5	1	1
+net_prio	8	1	1
+pids	6	39	1
+$
+$ python example.py 
+2021-05-23 13:03:59,899	INFO services.py:1174 -- View the Ray dashboard at http://127.0.0.1:8265
+[0, 1, 4, 9]
+$
+
 
 ===
 END
