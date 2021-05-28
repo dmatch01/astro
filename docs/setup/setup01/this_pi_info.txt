@@ -25899,6 +25899,13 @@ $ python example.py
 2021-05-23 13:03:59,899	INFO services.py:1174 -- View the Ray dashboard at http://127.0.0.1:8265
 [0, 1, 4, 9]
 $
+$ pip install cloudpickle
+Looking in indexes: https://pypi.org/simple, https://www.piwheels.org/simple
+Collecting cloudpickle
+  Downloading https://files.pythonhosted.org/packages/e7/e3/898487e5dbeb612054cf2e0c188463acb358167fef749c53c8bb8918cea1/cloudpickle-1.6.0-py3-none-any.whl
+Installing collected packages: cloudpickle
+Successfully installed cloudpickle-1.6.0
+$
 
 
 ===
